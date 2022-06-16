@@ -34,9 +34,7 @@ C++实现小型软件光栅化渲染器。
 
 ### Blinn-Phong 着色模型
 
-
-
-
+![](https://raw.githubusercontent.com/QSQiHai/QsRenderer/master/images/Blinn-Phong.png)
 
 
 
