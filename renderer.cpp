@@ -93,14 +93,14 @@ void Renderer::RenderMainFun() {
 				clipPos[j] = shader.vertex(j);
 			}
 
-			// 齐次除法
+			// Homogeneous division
 			for (int j = 0; j < 3; j++) {
 				double tmpw = clipPos[j][3];
 				clipPos[j] = clipPos[j] / tmpw;
 				clipPos[j][3] = tmpw;
 			}
 
-			// 视口变换
+			// Viewport Transform
 			mat<4, 4> viewportMatrix = GetViewportMatrix();
 			vec2 screenPos[3];
 
@@ -108,7 +108,7 @@ void Renderer::RenderMainFun() {
 				screenPos[j] = proj<2>(viewportMatrix * embed<4>(proj<2>(clipPos[j])));
 			}
 
-			// 构造包围盒
+			// Construct AABB
 			vec2 bboxmin(1e10, 1e10);
 			vec2 bboxmax(-1e10, -1e10);
 
@@ -123,7 +123,7 @@ void Renderer::RenderMainFun() {
 			bboxmax.x = (width - 1.) < bboxmax.x ? (width - 1.) : bboxmax.x;
 			bboxmax.y = (height - 1.) < bboxmax.y ? (height - 1.) : bboxmax.y;
 
-			// 光栅化
+			// Rasterization
 #pragma omp parallel for
 			for (int x = (int)bboxmin.x; x <= (int)bboxmax.x; x++) {
 				for (int y = (int)bboxmin.y; y <= (int)bboxmax.y; y++) {

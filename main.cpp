@@ -17,7 +17,7 @@ int main() {
 		modelArray.emplace_back(new Model(modelName));
 	}
 
-	Camera camera(vec3(1 * 0.8, 1 * 0.8, 3 * 0.8), vec3(0, 0, 0), vec3(0, 1, 0));
+	Camera camera(vec3(0.8, 0.8, 2.4), vec3(0, 0, 0), vec3(0, 1, 0));
 	Light light;
 
 	Renderer QsRenderer(camera, light, modelArray, 800, 800);
