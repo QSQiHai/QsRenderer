@@ -82,7 +82,7 @@ public :
 		double diffuse = saturate(worldSpaceLightDir * worldNormal);
 		double specular = pow(std::max((viewDir + worldSpaceLightDir).normalize() * worldNormal, 0.0), 15);
 		vec3 color = tex2D(mainTexture, uv);
-		out_color = saturate(color * (diffuse + specular + ambLight));
+		out_color = saturate(color * (specular + diffuse) + vec3(1, 1, 1) * ambLight);
 
 		return false;
 	}
