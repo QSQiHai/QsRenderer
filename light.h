@@ -1,0 +1,10 @@
+#pragma once
+
+#include "geometry.h"
+
+// Parallel light
+class Light {
+public :
+	vec3 lightPos, lightDir, lightColor;
+	Light();
+};
