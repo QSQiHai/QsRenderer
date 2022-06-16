@@ -59,11 +59,11 @@ std::string Model::GetFilename() const {
 }
 
 int Model::GetNumberOfVertices() const {
-	return verts.size();
+	return (int)verts.size();
 }
 
 int Model::GetNumberOfFaces() const {
-	return facet_vrt.size() / 3;
+	return (int)facet_vrt.size() / 3;
 }
 
 

@@ -46,7 +46,7 @@ class BlinnPhongShader : public Shader {
 	vec3 input_normal;
 	vec2 input_texcoord;
 
-	vec4 varying_pos[3];
+	vec4	  varying_pos[3];
 	mat<2, 3> varying_uv;
 	mat<3, 3> varying_worldNormal;
 	mat<3, 3> varying_worldPos;

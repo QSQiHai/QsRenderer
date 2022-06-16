@@ -12,7 +12,6 @@ public :
 	Buffer(int n, int m);
 	Buffer(int n, int m, T val);
 
-
 	int GetWidth() const;
 	int GetHeight() const;
 
