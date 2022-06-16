@@ -3,7 +3,7 @@
 #include "shader.h"
 
 Renderer::Renderer(Camera& camera, Light& light, std::vector<Model*>& modelArray, int width, int height) :
-	camera(camera), light(light), modelArray(modelArray), width(width), height(height), zBuffer(width, height, 1e10), frameBuffer(width, height) 
+	camera(camera), light(light), modelArray(modelArray), width(width), height(height), zBuffer(width, height, 1e10), frameBuffer(width, height)
 {}
 
 mat<4, 4> Renderer::GetModelMatrix(const Model& model) const {
@@ -124,7 +124,7 @@ void Renderer::RenderMainFun() {
 			bboxmax.y = (height - 1.) < bboxmax.y ? (height - 1.) : bboxmax.y;
 
 			// ¹âÕ¤»¯
-//#pragma omp parallel for
+#pragma omp parallel for
 			for (int x = (int)bboxmin.x; x <= (int)bboxmax.x; x++) {
 				for (int y = (int)bboxmin.y; y <= (int)bboxmax.y; y++) {
 					vec3 bc_screen = barycentric(screenPos, vec2(x, y));
