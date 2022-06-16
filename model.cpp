@@ -48,6 +48,7 @@ Model::Model(const std::string filename) : filename(filename) {
 		}
 	}
 	in.close();
+	std::cerr << "# v# " << GetNumberOfVertices() << " f# " << GetNumberOfFaces() << " vt# " << tex_coord.size() << " vn# " << norms.size() << std::endl;
 }
 
 vec3 Model::GetPosition() const {

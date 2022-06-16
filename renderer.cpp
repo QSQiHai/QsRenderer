@@ -77,7 +77,9 @@ void Renderer::GetTexture(const Model& model, const std::string suffix, TGAImage
 	size_t dot = filename.find_last_of(".");
 	if (dot == std::string::npos) return;
 	std::string texfile = filename.substr(0, dot) + suffix;
-	if (!output_img.read_tga_file(texfile.c_str())) exit(0);
+	bool ok = output_img.read_tga_file(texfile.c_str());
+	std::cerr << "texture file " << texfile << " loading " << (ok ? "ok" : "failed") << std::endl;
+	if (!ok) exit(0);
 }
 
 void Renderer::RenderMainFun() {
