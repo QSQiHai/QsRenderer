@@ -6,6 +6,81 @@ Renderer::Renderer(Camera& camera, Light& light, std::vector<Model*>& modelArray
 	camera(camera), light(light), modelArray(modelArray), width(width), height(height), zBuffer(width, height, 1e10), frameBuffer(width, height)
 {}
 
+void Renderer::RenderMainFun() {
+
+	for (Model* model : modelArray) {
+		BumpShader shader(*this, *model);
+
+		int n = model->GetNumberOfFaces();
+		for (int i = 0; i < n; i++) {
+			vec4 clipPos[3];
+			for (int j = 0; j < 3; j++) {
+				shader.PreWork(i, j);
+				clipPos[j] = shader.vertex(j);
+			}
+
+			// Homogeneous division
+			for (int j = 0; j < 3; j++) {
+				double tmpw = clipPos[j][3];
+				clipPos[j] = clipPos[j] / tmpw;
+				clipPos[j][3] = tmpw;
+			}
+
+			// Viewport Transform
+			mat<4, 4> viewportMatrix = GetViewportMatrix();
+			vec2 screenPos[3];
+
+			for (int j = 0; j < 3; j++) {
+				screenPos[j] = proj<2>(viewportMatrix * embed<4>(proj<2>(clipPos[j])));
+			}
+
+			// Construct AABB
+			vec2 bboxmin(1e10, 1e10);
+			vec2 bboxmax(-1e10, -1e10);
+
+			for (int i = 0; i < 3; i++) {
+				bboxmin.x = screenPos[i].x < bboxmin.x ? screenPos[i].x : bboxmin.x;
+				bboxmin.y = screenPos[i].y < bboxmin.y ? screenPos[i].y : bboxmin.y;
+				bboxmax.x = screenPos[i].x > bboxmax.x ? screenPos[i].x : bboxmax.x;
+				bboxmax.y = screenPos[i].y > bboxmax.y ? screenPos[i].y : bboxmax.y;
+			}
+			bboxmin.x = 0 > bboxmin.x ? 0 : bboxmin.x;
+			bboxmin.y = 0 > bboxmin.y ? 0 : bboxmin.y;
+			bboxmax.x = (width - 1.) < bboxmax.x ? (width - 1.) : bboxmax.x;
+			bboxmax.y = (height - 1.) < bboxmax.y ? (height - 1.) : bboxmax.y;
+
+			// Rasterization
+#pragma omp parallel for
+			for (int x = (int)bboxmin.x; x <= (int)bboxmax.x; x++) {
+				for (int y = (int)bboxmin.y; y <= (int)bboxmax.y; y++) {
+					vec3 bc_screen = barycentric(screenPos, vec2(x, y));
+					vec3 bc_clip = vec3(bc_screen.x / clipPos[0][3], bc_screen.y / clipPos[1][3], bc_screen.z / clipPos[2][3]);
+					double frag_depth = 1 / (bc_clip.x + bc_clip.y + bc_clip.z);
+					bc_clip = bc_clip / (bc_clip.x + bc_clip.y + bc_clip.z);
+
+					if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z<0 || frag_depth > zBuffer.GetValue(x, y)) continue;
+					vec3 color;
+					if (shader.fragment(bc_clip, color)) continue;
+					zBuffer.SetValue(x, y, frag_depth);
+					frameBuffer.SetValue(x, y, color);
+				}
+			}
+		}
+	}
+
+	TGAImage outputImage(width, height, TGAImage::RGB);
+	for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+			vec3 val = frameBuffer.GetValue(x, y);
+			TGAColor color(std::uint8_t(val.x * 255), std::uint8_t(val.y * 255), std::uint8_t(val.z * 255));
+			outputImage.set(x, y, color);
+		}
+	}
+	outputImage.write_tga_file("output.tga");
+
+	return;
+}
+
 mat<4, 4> Renderer::GetModelMatrix(const Model& model) const {
 	return mat<4, 4>::identity();
 }
@@ -82,77 +157,4 @@ void Renderer::GetTexture(const Model& model, const std::string suffix, TGAImage
 	if (!ok) exit(0);
 }
 
-void Renderer::RenderMainFun() {
 
-	for (Model* model : modelArray) {
-		BlinnPhongShader shader(*this, *model);
-
-		int n = model->GetNumberOfFaces();
-		for (int i = 0; i < n; i++) {
-			vec4 clipPos[3];
-			for (int j = 0; j < 3; j++) {
-				shader.PreWork(i, j);
-				clipPos[j] = shader.vertex(j);
-			}
-
-			// Homogeneous division
-			for (int j = 0; j < 3; j++) {
-				double tmpw = clipPos[j][3];
-				clipPos[j] = clipPos[j] / tmpw;
-				clipPos[j][3] = tmpw;
-			}
-
-			// Viewport Transform
-			mat<4, 4> viewportMatrix = GetViewportMatrix();
-			vec2 screenPos[3];
-
-			for (int j = 0; j < 3; j++) {
-				screenPos[j] = proj<2>(viewportMatrix * embed<4>(proj<2>(clipPos[j])));
-			}
-
-			// Construct AABB
-			vec2 bboxmin(1e10, 1e10);
-			vec2 bboxmax(-1e10, -1e10);
-
-			for (int i = 0; i < 3; i++) {
-				bboxmin.x = screenPos[i].x < bboxmin.x ? screenPos[i].x : bboxmin.x;
-				bboxmin.y = screenPos[i].y < bboxmin.y ? screenPos[i].y : bboxmin.y;
-				bboxmax.x = screenPos[i].x > bboxmax.x ? screenPos[i].x : bboxmax.x;
-				bboxmax.y = screenPos[i].y > bboxmax.y ? screenPos[i].y : bboxmax.y;
-			}
-			bboxmin.x = 0 > bboxmin.x ? 0 : bboxmin.x;
-			bboxmin.y = 0 > bboxmin.y ? 0 : bboxmin.y;
-			bboxmax.x = (width - 1.) < bboxmax.x ? (width - 1.) : bboxmax.x;
-			bboxmax.y = (height - 1.) < bboxmax.y ? (height - 1.) : bboxmax.y;
-
-			// Rasterization
-#pragma omp parallel for
-			for (int x = (int)bboxmin.x; x <= (int)bboxmax.x; x++) {
-				for (int y = (int)bboxmin.y; y <= (int)bboxmax.y; y++) {
-					vec3 bc_screen = barycentric(screenPos, vec2(x, y));
-					vec3 bc_clip = vec3(bc_screen.x / clipPos[0][3], bc_screen.y / clipPos[1][3], bc_screen.z / clipPos[2][3]);
-					double frag_depth = 1 / (bc_clip.x + bc_clip.y + bc_clip.z);
-					bc_clip = bc_clip / (bc_clip.x + bc_clip.y + bc_clip.z);
-
-					if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z<0 || frag_depth > zBuffer.GetValue(x, y)) continue;
-					vec3 color;
-					if (shader.fragment(bc_clip, color)) continue;
-					zBuffer.SetValue(x, y, frag_depth);
-					frameBuffer.SetValue(x, y, color);
-				}
-			}
-		}
-	}
-
-	TGAImage outputImage(width, height, TGAImage::RGB);
-	for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
-			vec3 val = frameBuffer.GetValue(x, y);
-			TGAColor color(std::uint8_t(val.x * 255), std::uint8_t(val.y * 255), std::uint8_t(val.z * 255));
-			outputImage.set(x, y, color);
-		}
-	}
-	outputImage.write_tga_file("output.tga");
-
-	return;
-}

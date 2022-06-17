@@ -20,6 +20,8 @@ class Renderer {
 public :
 	Renderer(Camera&, Light&, std::vector<Model*>&, int, int);
 
+	void RenderMainFun();
+
 	mat<4, 4> GetModelMatrix(const Model&) const;
 
 	mat<4, 4> GetCameraViewMatrix() const;
@@ -32,6 +34,4 @@ public :
 
 
 	vec3 barycentric(const vec2*, const vec2) const;
-
-	void RenderMainFun();
 };
