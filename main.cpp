@@ -17,8 +17,8 @@ int main() {
 		modelArray.emplace_back(new Model(modelName));
 	}
 
-	Camera camera(vec3(0.8, 0.8, 2.4), vec3(0, 0, 0), vec3(0, 1, 0));
-	Light light;
+	Camera camera(vec3(0.8, 0.8, 2.4), vec3(0, 0, 0));
+	Light light(vec3(1, 1, 1));
 
 	Renderer QsRenderer(camera, light, modelArray, 800, 800);
 	QsRenderer.RenderMainFun();

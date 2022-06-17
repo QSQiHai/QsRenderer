@@ -41,6 +41,7 @@ public :
 
 class BlinnPhongShader : public Shader {
 	TGAImage mainTexture;
+	TGAImage specTexture;
 
 	vec3 input_vertex;
 	vec3 input_normal;
@@ -54,6 +55,7 @@ class BlinnPhongShader : public Shader {
 public :
 	BlinnPhongShader(Renderer& renderer, Model& model) : Shader(renderer, model) {
 		renderer.GetTexture(model, "_main.tga", mainTexture);
+		renderer.GetTexture(model, "_spec.tga", specTexture);
 	}
 
 	void PreWork(const int iface, const int jvert) {
@@ -80,7 +82,7 @@ public :
 
 		const double ambLight = 10.0 / 255;
 		double diffuse = saturate(worldSpaceLightDir * worldNormal);
-		double specular = pow(std::max((viewDir + worldSpaceLightDir).normalize() * worldNormal, 0.0), 15);
+		double specular = pow(std::max((viewDir + worldSpaceLightDir).normalize() * worldNormal, 0.0), 5 + tex2D(specTexture, uv)[2] * 255);
 		vec3 color = tex2D(mainTexture, uv);
 		out_color = saturate(color * (specular + diffuse) + vec3(1, 1, 1) * ambLight);
 
