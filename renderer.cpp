@@ -157,4 +157,3 @@ void Renderer::GetTexture(const Model& model, const std::string suffix, TGAImage
 	if (!ok) exit(0);
 }
 
-

@@ -30,8 +30,8 @@ public :
 	
 	vec3 GetWorldSpaceLightDir() const;
 	mat<4, 4> GetViewportMatrix() const;
-	void GetTexture(const Model&, const std::string suffix, TGAImage& output_img);
 
+	void GetTexture(const Model&, const std::string suffix, TGAImage& output_img);
 
 	vec3 barycentric(const vec2*, const vec2) const;
 };
