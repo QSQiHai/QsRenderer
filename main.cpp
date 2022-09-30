@@ -16,6 +16,8 @@ int main() {
 		std::cin >> modelName;
 		modelArray.emplace_back(new Model(modelName));
 	}
+	
+	int test;
 
 	Camera camera(vec3(0.8, 0.8, 2.4), vec3(0, 0, 0));
 	Light light(vec3(1, 1, 1));
