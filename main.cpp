@@ -17,7 +17,7 @@ int main() {
 		modelArray.emplace_back(new Model(modelName));
 	}
 	
-	int test;
+	std::string str = "≥¢ ‘÷ÿππ‰÷»æ∆˜";
 
 	Camera camera(vec3(0.8, 0.8, 2.4), vec3(0, 0, 0));
 	Light light(vec3(1, 1, 1));
