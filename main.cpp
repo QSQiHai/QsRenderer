@@ -16,8 +16,8 @@ int main() {
 		std::cin >> modelName;
 		modelArray.emplace_back(new Model(modelName));
 	}
-	
-	std::string str = "≥¢ ‘÷ÿππ‰÷»æ∆˜";
+
+	std::string str = "try to rebuild my renderer";
 
 	Camera camera(vec3(0.8, 0.8, 2.4), vec3(0, 0, 0));
 	Light light(vec3(1, 1, 1));
