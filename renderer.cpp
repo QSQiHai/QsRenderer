@@ -1,15 +1,21 @@
 #include "renderer.h"
-#include "tgaimage.h"
+
 #include "shader.h"
 
 Renderer::Renderer(Camera& camera, Light& light, std::vector<Model*>& modelArray, int width, int height) :
-	camera(camera), light(light), modelArray(modelArray), width(width), height(height), zBuffer(width, height, 1e10), frameBuffer(width, height)
+	camera(camera), 
+	light(light), 
+	modelArray(modelArray), 
+	width(width), 
+	height(height), 
+	zBuffer(width, height, 1e10), 
+	frameBuffer(width, height)
 {}
 
 void Renderer::RenderMainFun() {
 
 	for (Model* model : modelArray) {
-		BumpShader shader(*this, *model);
+		BlinnPhongShader shader(*this, *model);
 
 		int n = model->GetNumberOfFaces();
 		for (int i = 0; i < n; i++) {

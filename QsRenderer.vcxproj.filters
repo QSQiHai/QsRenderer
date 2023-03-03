@@ -36,6 +36,9 @@
     <ClCompile Include="tgaimage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="buffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="geometry.h">

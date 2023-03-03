@@ -154,5 +154,3 @@ public:
 		return false;
 	}
 };
-
-

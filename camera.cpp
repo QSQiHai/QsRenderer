@@ -8,4 +8,3 @@ Camera::Camera(const vec3& cameraPos, const vec3& lookatPos) :
 Camera::Camera(const vec3& cameraPos, const vec3& lookatPos, double fovY, double aspect, double zNear, double zFar) :
 	cameraPos(cameraPos), lookatPos(lookatPos), fovY(fovY), aspect(aspect), zNear(zNear), zFar(zFar)
 {}
-
