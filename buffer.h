@@ -2,7 +2,7 @@
 
 #include <vector>
 
-template<class T> 
+template<typename T> 
 class Buffer {
 public:
 	Buffer() = default;
