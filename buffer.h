@@ -12,11 +12,13 @@ public:
 public:
 	int GetWidth() const { return width; }
 	int GetHeight() const { return height; }
+	T GetValue(int x, int y) const { return buffer[GetIdx(x, y)]; }
+	void SetValue(int x, int y, T val) { buffer[GetIdx(x, y)] = val; }
+
+private:
 	int GetSize() const { return buffer.size(); }
 	int GetIdx(int x, int y) const { return x + y * width; }
-	T GetValue(int x, int y) const { return buffer[GetIdx(x, y)]; }
 	T GetValue(int idx) const { return buffer[idx]; }
-	void SetValue(int x, int y, T val) { buffer[GetIdx(x, y)] = val; }
 	void SetValue(int idx, T val) { buffer[idx] = val; }
 
 private:
